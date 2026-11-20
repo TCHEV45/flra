@@ -12928,8 +12928,9 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 /******/ ])["default"];
 });</script>
 <script>
-const TESTAPP=/*TESTFLAG*/false;const BUILD='3.63';
+const TESTAPP=/*TESTFLAG*/false;const BUILD='3.64';
 const NOTES=[
+['3.64',['The “Share this app” QR code and link now always point to the secure address of this app'],0],
 ['3.63',['A device linked before the simpler sync is asked once whether it is your main device or a borrowed one'],0],
 ['3.63',['Sync in the main app is now manual with a main device and borrowed devices, and the sync service only holds your copy while a device is linked (details under 3.61 and 3.59)'],2],
 ['3.62',['“Copy everything to another device” by QR codes is removed from the main app. Use Sync to move your FLRAs, lift calcs, saved hazards and crane configurations between devices'],2],
@@ -15277,7 +15278,7 @@ function sharedView(m){['#homeBtn','#pdfTop','#tabs','#menuBtn'].forEach(s=>$(s)
 addEventListener('hashchange',checkShare);
 
 document.addEventListener('click',e=>{const t=e.target;if(t.closest&&t.closest('#buildNo'))showNotes();else if(t.closest&&t.closest('#bnX,#bnX2'))$('#bnm').classList.add('hide');else if(t.closest&&t.closest('#bnUp')){$('#bnm').classList.add('hide');checkUpdate()}});
-function appQR(){const c=$('#appqr');if(!c)return;const u=location.origin+location.pathname.replace(/index\.html$/,'');$('#appurl').textContent=u.replace(/^https?:\/\//,'');try{const q=qrMake(u),n=q.getModuleCount(),x=c.getContext('2d'),m=3,z=Math.floor(c.width/(n+2*m)),o=Math.floor((c.width-z*n)/2);x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.fillStyle='#000';for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(o+k*z,o+r*z,z,z)}catch(e){c.style.display='none'}}
+function appQR(){const c=$('#appqr');if(!c)return;const u=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?location.origin+location.pathname.replace(/index\.html$/,''):(TESTAPP?'https://test.pricedev.ca/':'https://flra.pricedev.ca/');$('#appurl').textContent=u.replace(/^https?:\/\//,'');try{const q=qrMake(u),n=q.getModuleCount(),x=c.getContext('2d'),m=3,z=Math.floor(c.width/(n+2*m)),o=Math.floor((c.width-z*n)/2);x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.fillStyle='#000';for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(o+k*z,o+r*z,z,z)}catch(e){c.style.display='none'}}
 
 /* ---------- menu (top left) ---------- */
 function secList(){return [['flra','FLRAs',list.filter(x=>recKind(x)==='flra').length],['calc','Lift calcs only',list.filter(isCalc).length]].concat(Object.keys(XF).filter(k=>XF[k].on).map(k=>[k,XF[k].tab,list.filter(x=>x.t===k).length]))}
