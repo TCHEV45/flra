@@ -12928,8 +12928,9 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 /******/ ])["default"];
 });</script>
 <script>
-const TESTAPP=/*TESTFLAG*/false;const BUILD='3.58';
+const TESTAPP=/*TESTFLAG*/false;const BUILD='3.62';
 const NOTES=[
+['3.62',['“Copy everything to another device” by QR codes is removed from the main app. Use Sync to move your FLRAs, lift calcs, saved hazards and crane configurations between devices'],2],
 ['3.58',['Sync between devices is now in the main app as well as the test app','Main app: the Christina Lake SAGD site map with its location finder is now built in under Site maps']],
 ['3.57',['Sync: new “Stop syncing and clear this device” for shared tablets – it syncs first, then removes your FLRAs, lift calcs, saved hazards and crane configurations from that device only. It will not clear if it cannot sync']],
 ['3.56',['Sync is now in this test app itself (test.pricedev.ca); the separate mytest address is retired'],1],
@@ -15441,6 +15442,8 @@ function syBoot(){if(!SYNCON)return;syS=syLoad();const h=/[#&]sync=([\w\-]{43})(
   render();if(syS)setTimeout(()=>syncNow(),1200);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow()});addEventListener('online',()=>syncNow());
   setInterval(()=>{if(document.visibilityState==='visible'){if(syS)syncNow();else syStat()}},30000)}
+/* the QR “Copy everything to another device” card is only in the test app; in the main app sync does that job */
+const caRender0=render;render=function(k){caRender0(k);if(!TESTAPP){const c=$('#caBtn'),d=c&&c.closest('.card');if(d)d.remove()}};
 render();
 checkShare();
 syBoot();
