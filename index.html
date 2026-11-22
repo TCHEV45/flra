@@ -12935,8 +12935,9 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 /******/ ])["default"];
 });</script>
 <script>
-const TESTAPP=/*TESTFLAG*/false;const BUILD='3.81';
+const TESTAPP=/*TESTFLAG*/false;const BUILD='3.82';
 const NOTES=[
+['3.82',['Suncor SWP sign-offs: “Pre-Lift Checklist Endorsements” now only shows when it is needed – the Lift Specialist line when a section 1 question on the Pre-Lift tab is answered No, the Permit Receiver line when a section 2-4 question is answered No. With no “No” answers the section is not on the page','Suncor SWP sign-offs: the “Lift Plan – Verification sign-off” and “Crane Movement Checklist – Sign-off” sections are now left off the page completely when they are not required, instead of showing a “Not needed” note'],2],
 ['3.81',['Suncor SWP sign-offs: the Pre-Lift Briefing lines are now in role order – Lift Director, Crane Operator 1 and 2, Signal Person 1 and 2, Rigger 1 and 2, then Spotter, Lift Crew and Lift-Related Personnel. Names and signatures already entered stay with their own line, and the paper copy is unchanged'],2],
 ['3.80',['Suncor SWP: when “Crane will be moved on site” is not ticked, the Crane Movement Checklist page is now left out of the PDF and the picture copy instead of being added blank'],2],
 ['3.79',['Barnhart Crane Lift FLRA sign-off: the Init. boxes beside the names are gone – print the name and sign. Initials already typed on older FLRAs still print'],2],
@@ -14793,6 +14794,9 @@ const synNoLS=v=>synU80(v)&&v.complexCriteria_1!=='1'&&!synColOn(v);
 const SYNMV=/^(m\d+[a-d]?|m(From|To|Date|Unit|Size|Height|Width|Task)|sM\d+(_id|_time)?)$/,SYNMVA=/^(m\d+[a-d]?|m(From|To|Height|Width|Task)|sM\d+(Sig|_id|_time)?)$/;
 const synMvOn=v=>v.mvOn==='1'||(v.mvOn===undefined&&Object.keys(v).some(k=>SYNMVA.test(k)&&v[k]!=null&&String(v[k]).trim()!==''));
 const synGateOn=(k,v)=>k==='colOn'?synColOn(v):k==='mvOn'?synMvOn(v):true;
+/* Pre-Lift Checklist endorsements: the Lift Specialist line (sE0) is needed only when a section 1 question is answered No,
+   the Permit Receiver line (sE1) only when a section 2-4 question is answered No. Lines that are not needed are left off the Sign-offs page and print blank. */
+const synEnd=(v,i)=>Object.keys(v).some(k=>(i===0?/^q1_\d+$/:/^q[234]_\d+$/).test(k)&&v[k]==='No');
 /* Lift Class: ticking any Complex Criteria ticks Complex; clearing them all takes that tick back off (restores what was there) unless the class was picked by hand since */
 function synCx(){const v=cur.v,n=SYN.slift.groups[0].fields.find(f=>f.k==='complexCriteria').o.length;let any=false;for(let i=0;i<n;i++)if(v['complexCriteria_'+i]==='1')any=true;
   if(any){if(v.liftClass!=='Complex'){v.cxPrev=v.liftClass||'';v.liftClass='Complex';v.cxAuto='1'}}
@@ -14887,11 +14891,11 @@ function synF0(f,yna){
   if(t==='ns')return `<div class="lab">${esc(f.l)}</div><div class="crew" style="grid-template-columns:1fr 112px"><input type="text" data-k="${k}" value="${val(k)}" placeholder="Print name" aria-label="${esc(f.l)}" autocomplete="off"><button type="button" data-sigr="${k}" aria-label="Signature">${cur.v[k+'Sig']?`<img src="${cur.v[k+'Sig']}" alt="signed">`:'Sign'}</button></div>`;
   return tx(k,esc(f.l))}
 function synSign(){const v=cur.v,X=XF[cur.t];return X.R.map(r=>{let b='';
-    const off=cur.t==='syn'&&(r.p==='sL'?synNoLS(v):r.p==='sM'?!synMvOn(v):false);
-    if(off)return `<div class="card"><h2>${esc(r.h)}</h2><p class="note" style="margin:0">${r.p==='sL'?'Not needed – the lift is at or under 80% of chart capacity, and neither “Multi Crane Lift” nor “Overlapping equipment or Multi Crane Lift” is ticked on the Lift Plan. This section comes back if any of that changes.':'Not needed – “Crane will be moved on site” is not ticked on the Movement tab.'}</p></div>`;
+    /* sections that are not required are left off the page completely */
+    if(cur.t==='syn'&&(r.p==='sL'?synNoLS(v):r.p==='sM'?!synMvOn(v):r.p==='sE'?!synEnd(v,0)&&!synEnd(v,1):false))return '';
     if(r.fields)b=r.fields.map(f=>synF(f)).join('');else
     if(r.crew){const cr=v.crew||(v.crew=[{},{},{},{}]);b=cr.map((c,i)=>`<div class="crew" style="grid-template-columns:1fr 112px"><input type="text" data-arr="crew" data-i="${i}" data-f="name" value="${aval('crew',i,'name')}" placeholder="Name" aria-label="Name ${i+1}" autocomplete="off"><button type="button" data-sig="${i}" aria-label="Signature ${i+1}">${c&&c.sig?`<img src="${c.sig}" alt="signed">`:'Sign'}</button></div>`).join('')+'<button type="button" class="btn sec wide" data-add="crew">＋ Add person</button>'}
-    else{b=(r.order||r.roles.map((_,i)=>i)).map(i=>{const role=r.roles[i],k=r.p+i;return `<div class="lab" style="margin-top:10px"><b>${esc(role)}</b></div><div class="crew" style="grid-template-columns:1fr 112px"><input type="text" data-k="${k}" value="${val(k)}" placeholder="Print name" aria-label="${esc(role)} name" autocomplete="off"><button type="button" data-sigr="${k}" aria-label="${esc(role)} signature">${v[k+'Sig']?`<img src="${v[k+'Sig']}" alt="signed">`:'Sign'}</button></div>${r.id?`<div class="row">${tx(k+'_id','ID #')}<label class="f"><span>Time</span><input type="time" data-k="${k}_time" value="${val(k+'_time')}"></label></div>`:''}${r.time?`<label class="f"><span>Time</span><input type="time" data-k="${k}_time" value="${val(k+'_time')}"></label>`:''}${r.dt?tx(k+'DT','Date/Time (fills in when signed)'):''}`}).join('')}
+    else{b=(r.order||r.roles.map((_,i)=>i)).filter(i=>!(cur.t==='syn'&&r.p==='sE'&&!synEnd(v,i))).map(i=>{const role=r.roles[i],k=r.p+i;return `<div class="lab" style="margin-top:10px"><b>${esc(role)}</b></div><div class="crew" style="grid-template-columns:1fr 112px"><input type="text" data-k="${k}" value="${val(k)}" placeholder="Print name" aria-label="${esc(role)} name" autocomplete="off"><button type="button" data-sigr="${k}" aria-label="${esc(role)} signature">${v[k+'Sig']?`<img src="${v[k+'Sig']}" alt="signed">`:'Sign'}</button></div>${r.id?`<div class="row">${tx(k+'_id','ID #')}<label class="f"><span>Time</span><input type="time" data-k="${k}_time" value="${val(k+'_time')}"></label></div>`:''}${r.time?`<label class="f"><span>Time</span><input type="time" data-k="${k}_time" value="${val(k+'_time')}"></label>`:''}${r.dt?tx(k+'DT','Date/Time (fills in when signed)'):''}`}).join('')}
     return `<div class="card"><h2>${esc(r.h)}</h2>${r.note?`<p class="note" style="margin-top:0">${esc(r.note)}</p>`:''}${b}</div>`}).join('')
   +`${X.banner?`<div class="banner red">${X.banner}</div>`:''}
   <button class="btn wide" id="pdfBtn">⬇ Save / Share PDF</button>
@@ -14978,7 +14982,7 @@ const SYNP={"p1":{"t":{"liftLocation":[215,498,243],"unit":[588,950,243],"craneM
 function synFlow(G,s,W,z){const ws=String(s||'').replace(/\s+/g,' ').trim().split(' ').filter(Boolean),out=[];let i=0,cur='';
   for(const w of ws){const t=cur?cur+' '+w:w;if(G.tw(t,z,0)<=W[i])cur=t;else{if(cur){out.push(cur);i++}if(i>=W.length)return null;cur=w;if(G.tw(cur,z,0)>W[i])return null}}
   if(cur)out.push(cur);return out}
-function synRender(G,f){const v=f.v,K=.36,P=SYNP,U8=synU80(v),NL=synNoLS(v),CO=synColOn(v),MV=synMvOn(v),hid=k=>(U8&&SYN80.includes(k))||(NL&&/^sL\d+$/.test(k))||(!CO&&SYNCOL.includes(k))||(!MV&&SYNMV.test(k)),g=k=>hid(k)||v[k]==null?'':String(v[k]).trim(),num=s=>s!==''&&isFinite(n(s))?fmt(n(s)):s,c=synCalc(v);
+function synRender(G,f){const v=f.v,K=.36,P=SYNP,U8=synU80(v),NL=synNoLS(v),CO=synColOn(v),MV=synMvOn(v),hid=k=>(U8&&SYN80.includes(k))||(NL&&/^sL\d+$/.test(k))||(!CO&&SYNCOL.includes(k))||(!MV&&SYNMV.test(k))||(k==='sE0'&&!synEnd(v,0))||(k==='sE1'&&!synEnd(v,1)),g=k=>hid(k)||v[k]==null?'':String(v[k]).trim(),num=s=>s!==''&&isFinite(n(s))?fmt(n(s)):s,c=synCalc(v);
   const T=(s,a,o)=>inkT(G,a[0]*K,a[2]*K,(a[1]-a[0])*K,s,Object.assign({size:9},o||{}));
   const U=(s,a,o)=>T(s,a,Object.assign({center:1},o||{}));
   const dbg=!!G.dbg,B=(on,b)=>{if(on||dbg)xbox(G,[b[0]*K,b[1]*K,b[2]*K])};
