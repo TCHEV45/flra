@@ -13105,8 +13105,9 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 /******/ ])["default"];
 });</script>
 <script>
-const TESTAPP=/*TESTFLAG*/false;const BUILD='3.94';
+const TESTAPP=/*TESTFLAG*/false;const BUILD='3.95';
 const NOTES=[
+['3.95',['Crane library: LTM 1160-5.1 outrigger stances are now minimum 8\'9" x 26\'1", reduced 16\'4" x 26\'1" and full 24\'6" x 26\'1" (width x length)'],2],
 ['3.94',['Crane library: LTM 1160-5.1 counterweight list is now 0 (no counterweight), 4,200, 7,700, 26,700, 31,500, 36,600, 50,500, 55,300, 60,400 and 102,500 lbs, and the narrow outrigger stance is 9\' wide x 26\'2" long'],2],
 ['3.92',['Crane library: LTM 1160-5.1 outrigger stance 9\' wide x 26\' long added'],2],
 ['3.91',['Crane library: Liebherr LTM 1160-5.1 is now complete – its chart book parts-of-line table (19,400 lbs single line up to 246,900 lbs on 14 parts) and folding jib deductions at 0°, 22.5° and 45° offset','Suncor Mobile Crane SWP: picking parts of line puts the single line pull in Line Pull, and the line pull for that number of parts is read straight off the crane\'s chart (Liebherr allows for sheave friction in its table) instead of line pull × parts'],2],
@@ -13390,7 +13391,7 @@ const CRLIB=[{id:'ltm1045-3.1',name:'Liebherr LTM 1045-3.1',cat:'All Terrain –
   jibStow:[2426,1764,1323,1103,882,882,662,662,662,662,662,441,441,441],
   jibErect:[['K-35.4 ft on jib head',[6395,9041,9041,9041,9041,5954,5954,5292,4851,4851,4851,4631,4851,4631]],['K-62.3 ft on jib head',[7497,11907,11907,11907,11907,7277,7277,6615,5954,5733,5954,5513,5954,5513]]]},
 {id:'ltm1160-5.1',name:'Liebherr LTM 1160-5.1',cat:'All Terrain – Liebherr',
-  web:1,out:[["Full: 24'7\" wide x 26'2\" long","24'7\" x 26'2\" (full)"],["Reduced: 16'5\" wide x 26'2\" long","16'5\" x 26'2\" (reduced)"],["9' wide x 26'2\" long","9' x 26'2\""]],
+  web:1,out:[["Minimum: 8'9\" wide x 26'1\" long","8'9\" x 26'1\" (minimum)"],["Reduced: 16'4\" wide x 26'1\" long","16'4\" x 26'1\" (reduced)"],["Full: 24'6\" wide x 26'1\" long","24'6\" x 26'1\" (full)"]],
   trav:{"w":[["10'2\" – 525/80 R 25 (20.5 R 25) tyres","10'2\""]],"h":[["13'1\" (12'8\" lowered) – 525/80 R 25 (20.5 R 25) tyres","13'1\""]]},
   cwt:[[0,0],[1.9,4200],[3.5,7700],[12.1,26700],[14.3,31500],[16.6,36600],[22.9,50500],[25.1,55300],[27.4,60400],[46.5,102500]],
   line:[19400,38600,57500,76300,94600,112700,130300,147900,165100,182100,198900,215400,231700,246900],
